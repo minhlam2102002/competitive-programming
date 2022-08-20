@@ -1,0 +1,2 @@
+- All solution in this blog: https://codeforces.com/blog/entry/70018
+- If some problem solutions not in that blog, they may in this book https://cses.fi/book/book.pdf at Dynamic programming or Bit manipution section
