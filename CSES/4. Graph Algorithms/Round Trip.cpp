@@ -1,16 +1,22 @@
-/*
-    author: Minh Lam
-*/
 #include<bits/stdc++.h>
 using namespace std;
 
 vector<vector<int>> graph;
 vector<bool> visited, inStack;
-void DFS(int u) {
+vector<int> parent;
+int start, finish;
+bool found = false;
+void DFS(int u) { 
     visited[u] = inStack[u] = true;
-    for (int v : graph[u]) {
+    for (int &v : graph[u]) {
         if (!visited[v]) {
+            parent[v] = u;
             DFS(v);
+        }
+        else if (v != parent[u] && inStack[v]) {
+            found = true;
+            start = v;
+            finish = u;
         }
     }
     inStack[u] = false;
@@ -29,10 +35,26 @@ int main() {
     }
     visited.resize(n, false);
     inStack.resize(n, false);
+    parent.resize(n, -1);
     for (int i = 0; i < n; i++) {
-        if (!visited[i]) {
+        if (!found && !visited[i]) {
             DFS(i);
         }
+    }
+    if (!found) {
+        cout << "IMPOSSIBLE";
+    } else {
+        vector<int> ans = {start};
+        while (finish != start) {
+            ans.push_back(finish);
+            finish = parent[finish];
+        }
+        ans.push_back(start);
+        cout << ans.size() << endl;
+        for (int i = ans.size() - 1; i >= 0; i--) {
+            cout << ans[i] + 1 << " ";
+        }
+        cout << endl;
     }
     return 0;
 }
