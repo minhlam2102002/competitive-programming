@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+using namespace std;
 // Binary Exponentiation
 // https://cp-algorithms.com/algebra/binary-exp.html
 long long binpow(long long a, long long b) {

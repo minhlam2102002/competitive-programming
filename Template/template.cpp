@@ -1,6 +1,3 @@
-/*
-    author: Minh Lam
-*/
 #include<bits/stdc++.h>
 using namespace std;
 
