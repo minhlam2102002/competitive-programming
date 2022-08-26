@@ -40,6 +40,16 @@
         "optional": "cpp",
         "future": "cpp",
         "iosfwd": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "barrier": "cpp",
+        "algorithm": "cpp",
+        "variant": "cpp",
+        "utility": "cpp",
+        "bit": "cpp",
+        "cwchar": "cpp",
+        "memory_resource": "cpp",
+        "limits": "cpp",
+        "ratio": "cpp",
+        "stop_token": "cpp"
     }
 }

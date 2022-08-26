@@ -1,18 +1,27 @@
-// Verified: https://cses.fi/problemset/task/1671/
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 const long long INF = 1e18;
+const int MOD = 1e9 + 7;
+
+int n, m;
 vector<vector<pair<int, int>>> adj;
-void dijkstra(int s, vector<long long> &dist, vector<int> &prev) {
-    int n = adj.size();
+vector<long long> dist;
+vector<int> pre, cnt, minLen, maxLen;
+
+void dijkstra(int s) {
     dist.assign(n, INF);
-    prev.assign(n, -1);
+    pre.assign(n, -1);
+    cnt.assign(n, 0);
+    minLen.assign(n, 0);
+    maxLen.assign(n, 0);
 
     dist[s] = 0;
+    cnt[s] = 1;
     using pii = pair<long long, int>;
     priority_queue<pii, vector<pii>, greater<pii>> pq;
     pq.push({0, s});
+
     while (!pq.empty()) {
         int u = pq.top().second;
         long long dist_u = pq.top().first;
@@ -25,37 +34,30 @@ void dijkstra(int s, vector<long long> &dist, vector<int> &prev) {
             int w = edge.second;
             if (dist[v] > dist[u] + w) {
                 dist[v] = dist[u] + w;
-                prev[v] = u;
+                cnt[v] = cnt[u];
+                minLen[v] = minLen[u] + 1;
+                maxLen[v] = maxLen[u] + 1;
+                pre[v] = u;
                 pq.push({dist[v], v});
+            }
+            else if (dist[v] == dist[u] + w) {
+                cnt[v] = (cnt[v] + cnt[u]) % MOD;
+                minLen[v] = min(minLen[v], minLen[u] + 1);
+                maxLen[v] = max(maxLen[v], maxLen[u] + 1);
             }
         }
     }
 }
-vector<int> restorePath(int s, int t, vector<int> const &prev) {
-    vector<int> path;
-    for (int v = t; v != s; v = prev[v])
-        path.push_back(v);
-    path.push_back(s);
-    reverse(path.begin(), path.end());
-    return path;
-}
-
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
-    int n, m;
     cin >> n >> m;
     adj.resize(n);
-    for (int i = 0; i < m; i++) {
-        int u, v, w;
+    for (int u, v, w, i = 0; i < m; ++i) {
         cin >> u >> v >> w;
         u--; v--;
         adj[u].push_back({v, w});
     }
-    vector<long long> dist;
-    vector<int> prev;
-    dijkstra(0, dist, prev);
-    for (int i = 0; i < n; i++) {
-        cout << dist[i] << ' ';
-    }
+    dijkstra(0);
+    cout << dist[n - 1] << ' ' << cnt[n - 1] << ' ' << minLen[n - 1] << ' ' << maxLen[n - 1];
     return 0;
 }
