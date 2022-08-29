@@ -9,19 +9,25 @@ def create(name, prefix, body, description):
     return res
 def parseFile(file):
     f = open(file, 'r')
-    topic = file.split('/')[-2]
-    name = file.split('/')[-1].split('.')[0]
-    prefix = topic + '/' + name
+    name = os.path.basename(file).split('.')[0]
+    prefix = file[2:]
     if name == 'template':
         prefix = 'cpp/template'
     body = []
     description = name
     for line in f:
-        if "Verified: " in line:
-            description += '\n' + line.split('// ')[1].strip()
-            continue
-        line = line[:-1] if line[-1] == '\n' else line
+        if 'template' not in name:
+            if '<bits/stdc++.h>' in line:
+                continue
+            if 'using namespace std;' in line:
+                continue
+            if "Verified: " in line:
+                description += '\n' + line.split('// ')[1].strip()
+                continue
+        if line[-1] == '\n':
+            line = line[:-1]
         body.append(line)
+
     return name, prefix, body, description
 def loadFile():
     files = []
