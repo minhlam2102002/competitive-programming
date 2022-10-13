@@ -1,22 +1,23 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+using ll = long long;
 struct SegmentTree {
-    const int NONE = -1e9;
+    const ll NONE = LLONG_MIN;
     int n;
-    vector<long long> st, lz;
+    vector<ll> st, lz;
     SegmentTree(int n) {
         this->n = n;
         st.assign(4 * n + 1, NONE);
-        lz.assign(4 * n + 1, NONE);
+        lz.assign(4 * n + 1, 0);
     }
-    SegmentTree(const vector<int> &a) : SegmentTree(a.size()) {
+    SegmentTree(const vector<ll> &a) : SegmentTree(a.size()) {
         build(0, 0, n - 1, a);
     }
-    long long merge(const long long &a, const long long &b) const {
+    ll merge(const ll &a, const ll &b) const {
         return max(a, b);
     }
-    void build(int id, int l, int r, const vector<int> &a) {
+    void build(int id, int l, int r, const vector<ll> &a) {
         if (l == r) {
             st[id] = a[l];
         } else {
@@ -33,35 +34,32 @@ struct SegmentTree {
             st[2 * id + 1] += lz[id];
             st[2 * id + 2] += lz[id];
         }
-        lz[id] = NONE;
+        lz[id] = 0;
     }
-    void update(int id, int l, int r, int fr, int to, int val) {
+    void update(int id, int l, int r, int fr, int to, int delta) {
         if (r < fr || to < l)
             return;
         if (fr <= l && r <= to) {
-            st[id] += val;
-            lz[id] += val;
+            st[id] += 1ll*delta;
+            lz[id] += 1ll*delta;
             return;
         }
-        if (lz[id] != NONE)
+        if (lz[id] != 0)
             down(id, l, r);
         int m = (l + r) / 2;
-        update(2 * id + 1, l, m, fr, to, val);
-        update(2 * id + 2, m + 1, r, fr, to, val);
+        update(2 * id + 1, l, m, fr, to, delta);
+        update(2 * id + 2, m + 1, r, fr, to, delta);
         st[id] = merge(st[2 * id + 1], st[2 * id + 2]);
     }
     void update(int fr, int to, int val) {
         update(0, 0, n - 1, fr, to, val);
     }
-    void update(int at, int val) {
-        update(0, 0, n - 1, at, at, val);
-    }
-    long long query(int id, int l, int r, int fr, int to) {
+    ll query(int id, int l, int r, int fr, int to) {
         if (r < fr || to < l)
             return NONE;
         if (fr <= l && r <= to)
             return st[id];
-        if (lz[id] != NONE)
+        if (lz[id] != 0)
             down(id, l, r);
         int m = (l + r) / 2;
         return merge(
@@ -69,10 +67,7 @@ struct SegmentTree {
             query(2 * id + 2, m + 1, r, fr, to)
         );
     }
-    long long query(int at) {
-        return query(0, 0, n - 1, at, at);
-    }
-    long long query(int fr, int to) {
+    ll query(int fr, int to) {
         return query(0, 0, n - 1, fr, to);
     }
 };
@@ -84,7 +79,7 @@ int main() {
     vector<int> a(n);
     for (int &x : a)
         cin >> x;
-    vector<int> prefix(n + 1);
+    vector<ll> prefix(n + 1);
     for (int i = 0; i < n; i++)
         prefix[i + 1] = prefix[i] + a[i];
     SegmentTree st(prefix);
@@ -94,12 +89,12 @@ int main() {
         if (t == 1) {
             int k, u;
             cin >> k >> u;
-            st.update(k, u - a[k - 1]);
+            st.update(k, n, u - a[k - 1]);
             a[k - 1] = u;
         } else {
             int l, r;
             cin >> l >> r;
-            cout << st.query(l, r) << endl;
+            cout << max(0ll, st.query(l, r) - st.query(l - 1, l - 1)) << endl;
         }
     }
     return 0;

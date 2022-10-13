@@ -4,11 +4,10 @@
 using namespace std;
 
 vector<vector<int>> adj;
-vector<int> low, num, sccId;
+vector<int> low, num, comp;
 vector<bool> found;
 stack<int> st;
-vector<vector<int>> scc;
-int n, m;
+vector<vector<int>> compList;
 int counter;
 
 void dfs(int u) {
@@ -25,24 +24,24 @@ void dfs(int u) {
         }
     }
     if (num[u] == low[u]) {
-        // Found a SCC
+        // Found a new component
         int v;
-        scc.push_back(vector<int>());
+        compList.push_back(vector<int>());
         do {
             v = st.top();
             st.pop();
-            scc.back().push_back(v);
-            sccId[v] = scc.size() - 1;
+            compList.back().push_back(v);
+            comp[v] = compList.size() - 1;
             found[v] = true;
         } while (v != u);
     }
 }
 
-void Tarjan() {
+void Tarjan(int n) {
     counter = 0;
     low.assign(n, 0);
     num.assign(n, 0);
-    sccId.assign(n, -1);
+    comp.assign(n, -1);
     found.assign(n, false);
     st = stack<int>();
     for (int i = 0; i < n; i++)
@@ -52,6 +51,7 @@ void Tarjan() {
 
 int main() {
     cin.tie(nullptr)->sync_with_stdio(false);
+    int n, m;
     cin >> n >> m;
     adj.resize(n);
     while (m--) {
@@ -60,6 +60,6 @@ int main() {
         --u, --v;
         adj[u].push_back(v);
     }
-    Tarjan();
+    Tarjan(n);
     return 0;
 }
